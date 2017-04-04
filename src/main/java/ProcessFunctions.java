@@ -2,24 +2,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Andrew Gao on 4/4/17.
  */
 public class ProcessFunctions {
 
+    static Logger logger = Logger.getLogger("JavaPy");
+
     public static Process jPy() throws IOException {
 
-        Process p;
-
-        try {
-            p = Runtime.getRuntime().exec("python");
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException("Is python installed?");
-        }
-
+        Process p = Runtime.getRuntime().exec("python");
         return p;
     }
 
@@ -32,7 +29,11 @@ public class ProcessFunctions {
 
     public static String jPyScriptArgs(List<String> args) throws IOException {
 
-        ProcessBuilder pb = new ProcessBuilder(args);
+        List<String> localArgs = new ArrayList<String>();
+        localArgs.add("python");
+        localArgs.addAll(args);
+
+        ProcessBuilder pb = new ProcessBuilder(localArgs);
 
         return runScript(pb);
     }
@@ -51,6 +52,7 @@ public class ProcessFunctions {
         }
 
         while ((temp = stdError.readLine()) != null) {
+            logger.log(Level.INFO, temp);
             throw new IllegalArgumentException("There are errors in this script.");
         }
 
